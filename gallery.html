@@ -1,0 +1,40 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101713"><title>Project Gallery — Vyshnav A P</title><link rel="stylesheet" href="styles.css"></head><body id="top">
+<header><div class="wrap" style="display:flex;align-items:center;justify-content:space-between;width:min(1160px,calc(100% - 48px))"><a class="brand" href="index.html">VYSHNAV<span>.</span></a><button class="menu" aria-label="Open navigation">MENU</button><nav><a class="" href="index.html">HOME</a><a class="" href="projects.html">PROJECTS</a><a class="active" href="gallery.html">PROJECT GALLERY</a><a class="nav-cta" href="index.html#contact">LET'S TALK ↗</a></nav></div></header>
+<main class="wrap"><section class="page-hero"><div class="eyebrow">Build log · Visual archive</div><h1>Project <em>gallery.</em></h1><p class="lead">A dedicated visual archive for project photographs — prototypes, hardware, PCB layouts, wiring, test setups and finished systems.</p></section>
+<div class="gallery-tools"><label class="upload-label">＋ ADD PROJECT PHOTOS<input id="bulkUpload" type="file" accept="image/*" multiple hidden></label><span class="gallery-note">Choose multiple images. They are stored in this browser on this device.<br>Use clear, well-lit photos of your actual work.</span></div>
+<div class="photo-grid" id="photoGrid"></div>
+<section class="callout"><div><div class="eyebrow">Need to update the archive?</div><h2 style="font-size:30px;margin:12px 0">Add more project moments.</h2><p>Upload images from your project folders. The gallery keeps them in this browser so you can arrange your portfolio before publishing.</p></div><a class="btn" href="projects.html">BACK TO PROJECTS ↗</a></section>
+</main>
+<footer class="wrap"><span>© 2026 VYSHNAV A P · ENGINEERING PORTFOLIO</span><span>BUILT WITH CURIOSITY <a href="#top">↑ BACK TO TOP</a></span></footer>
+<script src="main.js"></script><script>
+(()=>{
+ const grid=document.getElementById('photoGrid'),input=document.getElementById('bulkUpload');
+ const key='vyshnav_project_gallery_v1';
+ const defaults=['SmartBin Pro','Liquid-level monitoring','Automated watering system','PCB & hardware design','Firmware flashing device','Water meter test bench','3D product development','Prototype & integration','Testing and validation'];
+ let items=[];
+ try{items=JSON.parse(localStorage.getItem(key)||'[]')}catch(e){items=[]}
+ function save(){try{localStorage.setItem(key,JSON.stringify(items))}catch(e){alert('Browser storage is full. Please use smaller images or fewer photos.');}}
+ function render(){
+  grid.innerHTML='';
+  if(!items.length){grid.innerHTML='<div class="empty-state">YOUR PROJECT PHOTO WALL IS READY — ADD YOUR FIRST IMAGES ABOVE.</div>';return}
+  items.forEach((item,index)=>{
+   const tile=document.createElement('div');tile.className='photo-slot';
+   const img=document.createElement('img');img.src=item.src;img.alt=item.title||'Project photograph';
+   const title=document.createElement('div');title.className='photo-title';title.textContent=item.title||'PROJECT PHOTOGRAPH';
+   const replace=document.createElement('button');replace.className='replace';replace.textContent='REMOVE';replace.type='button';
+   replace.addEventListener('click',e=>{e.stopPropagation();items.splice(index,1);save();render()});
+   tile.append(img,title,replace);grid.appendChild(tile);
+  });
+ }
+ input.addEventListener('change',()=>{
+  const files=[...input.files].filter(f=>f.type.startsWith('image/'));
+  files.forEach(file=>{
+   const reader=new FileReader();
+   reader.onload=()=>{items.push({title:file.name.replace(/\.[^.]+$/,'').replace(/[-_]/g,' '),src:reader.result});save();render()};
+   reader.readAsDataURL(file);
+  });
+  input.value='';
+ });
+ render();
+})();
+</script></body></html>
